@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 const HeroSection = ({
   ratCharacterSrc = "/images/ratCharacter.png",
   tunnelSrc = "/images/tunnel.png",
-  tunnelCoverSrc = "/images/tunnelcover.png",
+  tunnelCoverSrc = "/images/tunnelCover.png",
   backgroundSrc = "/background/hero.png",
   backgroundOutSrc = "/background/street.png",
 }) => {
