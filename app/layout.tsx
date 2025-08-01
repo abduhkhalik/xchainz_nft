@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Rock_Salt } from "next/font/google";
 import "./globals.css";
+import { DekstopNav } from "@/components/DekstopNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const rockSalt = Rock_Salt({
+  variable: "--font-rock-salt",
+  weight: "400",
 });
 
 const geistMono = Geist_Mono({
@@ -25,8 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}, ${rockSalt.variable} antialiased`}
       >
+        <DekstopNav />
         {children}
       </body>
     </html>
