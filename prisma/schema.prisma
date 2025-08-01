@@ -1,0 +1,70 @@
+    // prisma/schema.prisma
+
+    generator client {
+      provider = "prisma-client-js"
+    }
+
+    datasource db {
+      provider = "postgresql"
+      url      = env("DATABASE_URL")
+    }
+
+    // --- Definisi Model Anda ---
+
+    model Categorys {
+      id        String   @id @default(cuid())
+      name      String   @unique
+      createdAt DateTime @default(now())
+      updatedAt DateTime @updatedAt
+      layers    Layers[]  // Relation to Layer model
+
+      @@map("categories") // Maps to a table named 'categories' in the database
+    }
+
+    model Layers {
+      id          String   @id @default(cuid())
+      name        String
+      filePath    String   @unique // Absolute or relative path to the layer file on disk
+      fileExtension String   // e.g., ".mp4", ".gif", ".webm"
+      category    Categorys @relation(fields: [categoryId], references: [id])
+      categoryId  String
+      createdAt   DateTime @default(now())
+      updatedAt   DateTime @updatedAt
+
+      @@unique([categoryId, name]) // Ensures unique layer names within each category
+      @@map("layers") // Maps to a table named 'layers' in the database
+    }
+
+    model Collections {
+      id                     String    @id @default(cuid())
+      name                   String    @unique // e.g., "MyAwesomeVideoNFTs"
+      description            String
+      totalMinted            Int       @default(0) // Counter for NFTs in this collection
+      combinedMetadataIpfsUrl String? // IPFS URL for the collection's aggregate metadata
+      previewImageUrl        String?   // IPFS URL for a collection-wide preview image/GIF
+      createdAt              DateTime  @default(now())
+      updatedAt              DateTime  @updatedAt
+      nfts                   Nfts[]     // Relation to individual Nft models
+
+      @@map("collections")
+    }
+
+    model Nfts {
+      id              String         @id @default(cuid())
+      name            String         // e.g., "MyAwesomeVideoNFTs #1"
+      description     String
+      imageIpfsUrl    String         // IPFS URI for the NFT's media (video/GIF)
+      animationIpfsUrl String?       // Optional: if different from image
+      metadataIpfsUrl String         @unique // IPFS URI for the NFT's metadata JSON
+      metadataHash    String         @unique // Just the CID part of metadataIpfsUrl
+      localVideoPath  String?        // Optional: path to the local video file before deletion
+      attributes      Json           // Structured attributes, e.g., trait_type, value
+      collection      Collections     @relation(fields: [collectionId], references: [id])
+      collectionId    String
+      createdAt       DateTime       @default(now())
+      updatedAt       DateTime       @updatedAt
+
+      @@unique([collectionId, name]) // Ensures unique NFT names within a collection
+      @@map("nfts")
+    }
+    

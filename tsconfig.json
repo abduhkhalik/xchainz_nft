@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2020", // Atau es2018, tapi es2020 lebih baik untuk Node.js modern
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true, // Sangat penting untuk melewati pemeriksaan tipe file deklarasi dari node_modules
+    "baseUrl": "./src", // Ini penting untuk alias impor seperti "@/*"
+    "paths": {
+      "@/*": ["*"] // Ini memungkinkan impor seperti "@/utils/ffmpeg"
+    }
+  },
+  "include": [
+    "src/**/*" // Pastikan ini mencakup semua file .ts di folder src
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts"
+  ]
+}
