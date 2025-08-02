@@ -3,11 +3,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer utilities {
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+    -webkit-animation: marquee 30s linear infinite;
+}
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-button: #31B06A;
+  --color-button: #31b06a;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-rock: var(--font-rock-salt);

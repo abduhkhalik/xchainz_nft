@@ -10,7 +10,7 @@ const geistSans = Geist({
 
 const rockSalt = Rock_Salt({
   variable: "--font-rock-salt",
-  weight: "400",
+  weight: ["400"],
   subsets: ["latin"]
 });
 

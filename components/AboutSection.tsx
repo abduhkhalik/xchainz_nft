@@ -1,120 +1,48 @@
+// components/AboutSection.tsx
 "use client";
 
 import Image from "next/image";
-import React from "react";
-import { Button } from "./ui/button";
-import { motion } from "framer-motion";
 
-const AboutSection = ({
-  xChainzCharacter = "/images/xChainzCharacter.png",
-}) => {
+const AboutSection = ({ nftCharacter = "/images/xChainzCharacter.png" }) => {
   return (
-    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black">
-      <div className="w-full max-w-full h-full grid grid-cols-2">
-        {/* Character Images */}
-        <div className="relative">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="absolute translate-x-12/12 translate-y-1/2 inset-0 z-0 w-[278px] h-[278px] bg-[#E9B410] rounded-[16px]"
-          />
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute translate-x-6/12 translate-y-1/12 inset-0 z-1"
-          >
+    <section className="min-h-screen w-full bg-black overflow-hidden text-white flex flex-col items-center justify-center px-6 py-12">
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 items-center gap-10">
+        {/* NFT Character with Yellow Background */}
+        <div className="flex justify-center">
+          <div className="bg-amber-400 rounded-2xl w-[260px] h-[260px] flex items-center justify-center">
             <Image
-              src={xChainzCharacter}
-              alt="Xchainz Character"
-              width={200}
-              height={200}
-              objectFit="contain"
-              quality={100}
+              src={nftCharacter}
+              alt="NFT Character"
+              width={800}
+              height={800}
+              className="object-contain w-[200px] h-auto"
+              priority
             />
-          </motion.div>
+          </div>
         </div>
 
-        {/* Description */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0, x: 50 },
-            visible: {
-              opacity: 1,
-              x: 0,
-              transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.6,
-              },
-            },
-          }}
-          className="flex flex-col -ml-10 justify-center items-start text-white"
-        >
-          <motion.h2
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            className="font-rock text-sm mb-2"
-          >
-            Enter a code/link
-          </motion.h2>
-
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            className="font-rock w-md"
-          >
-            <p className="text-6xl">Lorem ipsum dolor sit amet.</p>
-          </motion.div>
-
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, scale: 0.95 },
-              visible: { opacity: 1, scale: 1 },
-            }}
-            className="my-4"
-          >
-            <Button
-              type="button"
-              className="bg-button text-2xl p-4 w-[198px] h-[48px] rounded-[8px] hover:scale-3d"
-            >
-              Mint
-            </Button>
-          </motion.div>
-
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            className="font-rock w-md"
-          >
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatum nostrum id velit cum, a tempora iusto amet delectus
-              accusamus veritatis sit enim vel quae unde modi soluta, minus
-              nulla magni.
-            </p>
-          </motion.div>
-        </motion.div>
-
-        {/* Footer Note */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="relative flex justify-center items-center mb-10"
-        >
-          <p className="absolute font-bricolage bottom-0 text-white translate-x-2/3 text-center text-4xl font-medium w-md">
-            Xcainz is a 300-piece masked NFT collection
+        {/* Text Section */}
+        <div className="text-center md:text-left space-y-6 font-rock">
+          <p className="text-sm font-light italic">Enter a code/link</p>
+          <h1 className="text-4xl md:text-5xl font-bold font-handwritten leading-snug">
+            Lorem ipsum dolor sit amet.
+          </h1>
+          <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-semibold transition">
+            Mint
+          </button>
+          <p className="text-sm md:text-base font-light max-w-md mx-auto md:mx-0">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
+            nostrum id velit cum, a tempora iusto amet delectus accusamus
+            veritatis sit enim vel quae unde modi soluta, minus nulla magni.
           </p>
-        </motion.div>
+        </div>
+      </div>
+
+      {/* Footer Description */}
+      <div className="pt-24 text-center">
+        <p className="text-xl md:text-2xl font-semibold">
+          Xcainz is a 300-piece masked NFT collection
+        </p>
       </div>
     </section>
   );
