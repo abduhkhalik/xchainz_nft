@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react"; // ⬅️ tambah ini
 
 const HeroSection = ({
   ratCharacterSrc = "/images/ratCharacter.png",
@@ -16,45 +17,78 @@ const HeroSection = ({
 }) => {
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [wsUrl, setWsUrl] = useState<string | null>(null);
+  const [uuid, setUuid] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const { data: session, status } = useSession(); // ⬅️ ambil session
+  const isAuthenticated = status === "authenticated";
 
   const handleLogin = useCallback(async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get("/api/auth/login");
-      const { qr, websocket } = res.data;
+      const { qr, websocket, uuid } = res.data;
 
       setQrUrl(qr);
       setWsUrl(websocket);
+      setUuid(uuid);
       setShowModal(true);
     } catch (err) {
-      console.error("Login request failed:", err);
+      console.error("❌ Gagal membuat QR login:", err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!wsUrl) return;
+    if (!wsUrl || !uuid) return;
 
     const ws = new WebSocket(wsUrl);
 
-    ws.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
+    ws.onmessage = async (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
 
-      if (data.signed === true) {
-        ws.close();
-        setShowModal(false);
-        router.push("/"); // ⬅️ redirect setelah login sukses
-      }
+        if (data?.signed === true) {
+          ws.close();
+          setShowModal(false);
 
-      if (data.signed === false) {
-        console.log("User rejected the request");
+          // Verifikasi signature ke backend
+          const result = await axios.post("/api/auth/login", { uuid });
+          const signedBy = result.data.account;
+
+          const authRes = await signIn("credentials", {
+            signedBy,
+            redirect: false,
+          });
+
+          if (authRes?.ok) {
+            router.refresh();
+          } else {
+            console.error("❌ Gagal login ke NextAuth:", authRes?.error);
+          }
+        }
+
+        if (data?.signed === false) {
+          console.log("🚫 User menolak permintaan login");
+          ws.close();
+          setShowModal(false);
+        }
+      } catch (err) {
+        console.error("❌ WebSocket Error:", err);
         ws.close();
-        setShowModal(false);
       }
     };
 
+    ws.onerror = (err) => {
+      console.error("❌ WS error:", err);
+      ws.close();
+    };
+
     return () => ws.close();
-  }, [wsUrl, router]);
+  }, [wsUrl, uuid, router]);
 
   return (
     <section className="relative w-full h-screen overflow-hidden flex items-center justify-center bg-black">
@@ -102,14 +136,39 @@ const HeroSection = ({
             transition={{ delay: 0.8, duration: 0.8 }}
             className="absolute right-0 bottom-1/2 transform translate-y-1/2 -translate-x-1/2 z-40"
           >
-            <Button
-              onClick={handleLogin}
-              className="bg-button hover:bg-button text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
-            >
-              Login with Xaman
-            </Button>
+            {isAuthenticated ? (
+              <div className="text-center space-y-2">
+                <div className="bg-white text-black px-6 py-3 rounded-full shadow-lg font-bold">
+                  Logged in as:{" "}
+                  <div className="text-xs mt-1 break-words max-w-[200px] mx-auto">
+                    {session?.user?.id}
+                  </div>
+                </div>
+                <Button
+                  onClick={() => signOut({ redirect: false })}
+                  disabled={isLoading}
+                  className="mt-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={handleLogin}
+                disabled={isLoading}
+                className="bg-button hover:bg-button text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Loading...
+                  </div>
+                ) : (
+                  "Login with Xaman"
+                )}
+              </Button>
+            )}
           </motion.div>
-
           {/* Tunnel */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}

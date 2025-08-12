@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Rock_Salt } from "next/font/google";
 import "./globals.css";
 import { DekstopNav } from "@/components/DekstopNav";
+import SessionContextProvider from "@/components/providers/SessionContextProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,7 +12,7 @@ const geistSans = Geist({
 const rockSalt = Rock_Salt({
   variable: "--font-rock-salt",
   weight: ["400"],
-  subsets: ["latin"]
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
@@ -34,8 +35,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable}, ${rockSalt.variable} antialiased`}
       >
-        <DekstopNav />
-        {children}
+        <SessionContextProvider>
+          <DekstopNav />
+          {children}
+        </SessionContextProvider>
       </body>
     </html>
   );

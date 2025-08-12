@@ -1,20 +1,23 @@
 export const comments = [
   {
+    name: "Elon Musk",
+    handle: "elonmusk",
     avatar: "/images/xChainzCharacter.png",
-    name: "John Doe",
-    handle: "@johndoe",
-    comment: "Minted 3 of them 🔥 these NFTs go hard!",
+    comment: "To the moon 🌕",
+    verified: true,
   },
   {
+    name: "Vitalik Buterin",
+    handle: "vitalik",
     avatar: "/images/xChainzCharacter.png",
-    name: "CryptoChick",
-    handle: "@crypto_chick",
-    comment: "This art is insane. Clean, rare, and masked up 😎",
+    comment: "Decentralization matters.",
+    verified: true,
   },
   {
+    name: "Anonymous Rat",
+    handle: "xrat.eth",
     avatar: "/images/xChainzCharacter.png",
-    name: "Web3 Ninja",
-    handle: "@ninjax",
-    comment: "Only 300 pieces? I’m in. Just minted 🚀",
+    comment: "Minted mine. Now waiting in the shadows 🐀",
+    verified: false,
   },
 ];

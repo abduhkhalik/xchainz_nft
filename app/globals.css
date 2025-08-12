@@ -16,7 +16,7 @@
   .animate-marquee {
     animation: marquee 30s linear infinite;
     -webkit-animation: marquee 30s linear infinite;
-}
+  }
 }
 
 @theme inline {
