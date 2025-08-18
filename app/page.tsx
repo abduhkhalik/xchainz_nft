@@ -1,14 +1,16 @@
-import AboutSection from "@/components/AboutSection";
-import Hero from "@/components/Hero";
+import HolderSection from "@/components/HolderSection";
+import NewHero from "@/components/NewHero";
+import ProgresSection from "@/components/progresSection";
 import TwitterTicker from "@/components/tickerSection";
 import React from "react";
 
 const Home = () => {
   return (
     <div>
-      <Hero/>
-      <TwitterTicker/>
-      <AboutSection/>
+      <NewHero />
+      <TwitterTicker />
+      <HolderSection />
+      <ProgresSection />
     </div>
   );
 };

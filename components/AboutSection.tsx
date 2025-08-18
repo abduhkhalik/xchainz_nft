@@ -9,7 +9,9 @@ type Props = {
   nftCharacter?: string;
 };
 
-const AboutSection = ({ nftCharacter = "/images/xChainzCharacter.png" }: Props) => {
+const AboutSection = ({
+  nftCharacter = "/images/xChainzCharacter.png",
+}: Props) => {
   const controls = useAnimation();
 
   const { ref, inView } = useInView({

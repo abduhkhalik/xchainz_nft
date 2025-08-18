@@ -2,16 +2,11 @@
 
 import { comments } from "@/lib/comments";
 import Image from "next/image";
-import {
-  MessageCircle,
-  Repeat2,
-  Heart,
-  BadgeCheck,
-} from "lucide-react";
+import { MessageCircle, Repeat2, Heart, BadgeCheck } from "lucide-react";
 
 const TwitterTicker = () => {
   return (
-    <div className="w-full bg-black border-y border-neutral-800 py-6 overflow-hidden">
+    <div className="w-full h-[200px] flex justify-center bg-[#151515] items-center overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee gap-16 px-6">
         {[...comments, ...comments].map((tweet, index) => (
           <div
@@ -42,7 +37,7 @@ const TwitterTicker = () => {
               <p className="text-gray-100 max-w-[300px]">{tweet.comment}</p>
 
               {/* Action Icons */}
-              <div className="flex gap-4 text-gray-500 text-xs pt-1">
+              <div className="flex gap-4 text-gray-500 text-lg pt-1">
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-4 h-4" />
                   <span>12</span>
