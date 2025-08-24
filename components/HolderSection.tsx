@@ -15,7 +15,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const { data: session, status } = useSession(); // ⬅️ ambil session
+  const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
 
   const handleLogin = useCallback(async () => {
@@ -30,6 +30,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
       setShowModal(true);
     } catch (err) {
       console.error("❌ Gagal membuat QR login:", err);
+      toast.error("Gagal membuat QR login");
     } finally {
       setIsLoading(false);
     }
@@ -48,21 +49,25 @@ const HolderSection = ({ character = "/images/character.png" }) => {
           ws.close();
           setShowModal(false);
 
-          // Verifikasi signature ke backend
+          // ✅ Verifikasi signature ke backend
           const result = await axios.post("/api/auth/login", { uuid });
           const signedBy = result.data.account;
 
           const authRes = await signIn("credentials", {
             signedBy,
-            redirect: false,
+            redirect: false, // ⬅️ jangan redirect ke /error
           });
 
           if (authRes?.ok) {
-            // router.refresh();
-            toast.success("Welcome My Holder")
+            toast.success("Welcome My Holder 🚀");
+            router.refresh();
           } else {
             console.error("❌ Gagal login ke NextAuth:", authRes?.error);
-            toast.error("Anda bukan holder NFT koleksi ini, sehingga tidak dapat login.")
+            if (authRes?.error === "NOT_HOLDER") {
+              toast.error("Anda bukan holder NFT koleksi ini, akses ditolak.");
+            } else {
+              toast.error("Login gagal: " + (authRes?.error ?? "Unknown error"));
+            }
           }
         }
 
@@ -70,22 +75,27 @@ const HolderSection = ({ character = "/images/character.png" }) => {
           console.log("🚫 User menolak permintaan login");
           ws.close();
           setShowModal(false);
+          toast.warning("Login dibatalkan.");
         }
       } catch (err) {
         console.error("❌ WebSocket Error:", err);
         ws.close();
+        toast.error("Terjadi kesalahan koneksi login");
       }
     };
 
     ws.onerror = (err) => {
       console.error("❌ WS error:", err);
       ws.close();
+      toast.error("WebSocket error, coba lagi");
     };
 
     return () => ws.close();
   }, [wsUrl, uuid, router]);
+
   return (
-    <div id="account"
+    <div
+      id="account"
       className="w-full h-[597px] overflow-hidden px-16"
       style={{
         backgroundImage: 'url("/bg/bgWave.svg")',
@@ -115,6 +125,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
             recognition to take a 3D image of your foot and pressure
             distribution in less than 2 minutes no molds required!
           </p>
+
           {isAuthenticated ? (
             <div className="text-center space-y-2 mt-26">
               <div className="bg-white text-black px-6 py-3 rounded-full shadow-lg font-bold">
@@ -136,20 +147,21 @@ const HolderSection = ({ character = "/images/character.png" }) => {
               variant={"outline"}
               className="uppercase text-3xl bg-transparent mt-26 p-6 font-jakarta font-medium h-[80px]"
               onClick={handleLogin}
+              disabled={isLoading}
             >
-               {isLoading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Loading...
-                  </div>
-                ) : (
-                  "account"
-                )}
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Loading...
+                </div>
+              ) : (
+                "account"
+              )}
             </Button>
-            
           )}
         </div>
       </div>
+
       {/* QR Modal Overlay */}
       {showModal && qrUrl && (
         <div className="fixed inset-0 z-[99] bg-black bg-opacity-80 flex items-center justify-center">

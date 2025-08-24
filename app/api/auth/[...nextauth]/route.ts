@@ -2,7 +2,7 @@ import { isHolderOfIssuer } from "@/lib/xprlUtils";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const COLLECTION_ISSUER = "rXXXXXXXXXXXXXXXXXXXXXXXXXXX"; // ganti dengan issuer NFT Anda
+const COLLECTION_ISSUER = process.env.COLLECTION_ISSUER!; // ganti dengan issuer NFT Anda
 
 const handler = NextAuth({
   providers: [
@@ -15,11 +15,10 @@ const handler = NextAuth({
         const signedBy = credentials?.signedBy;
         if (!signedBy) return null;
 
-        // ✅ cek holder NFT
         const validHolder = await isHolderOfIssuer(signedBy, COLLECTION_ISSUER);
         if (!validHolder) {
           console.log("❌ Bukan holder, akses ditolak");
-          return null;
+          throw new Error("NOT_HOLDER"); // lempar error spesifik
         }
 
         console.log("✅ Holder valid, login diizinkan");
@@ -28,7 +27,7 @@ const handler = NextAuth({
     }),
   ],
   session: { strategy: "jwt" },
-  pages: { signIn: "/" }, // optional redirect
+  pages: { signIn: "/" },
 });
 
 // ⬅️ WAJIB: export GET & POST agar NextAuth jalan
