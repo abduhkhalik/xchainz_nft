@@ -58,7 +58,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
           });
 
           if (authRes?.ok) {
-            router.refresh();
+            // router.refresh();
             toast.success("Welcome My Holder")
           } else {
             console.error("❌ Gagal login ke NextAuth:", authRes?.error);
