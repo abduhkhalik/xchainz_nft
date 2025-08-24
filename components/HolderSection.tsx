@@ -55,8 +55,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
 
           const authRes = await signIn("credentials", {
             signedBy,
-            redirect: true, // ⬅️ jangan redirect ke /error
-            callbackUrl: "/",
+            redirect: false, // ⬅️ jangan redirect ke /error
           });
 
           if (authRes?.ok) {
@@ -134,7 +133,7 @@ const HolderSection = ({ character = "/images/character.png" }) => {
               <div className="bg-white text-black px-6 py-3 rounded-full shadow-lg font-bold">
                 Logged in as:{" "}
                 <div className="text-xs mt-1 break-words max-w-[200px] mx-auto">
-                  {session?.user?.id}
+                  {session?.user?.address}
                 </div>
               </div>
               <Button

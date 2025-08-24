@@ -2,7 +2,21 @@ import { isHolderOfIssuer } from "@/lib/xprlUtils";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const COLLECTION_ISSUER = process.env.COLLECTION_ISSUER!;
+const COLLECTION_ISSUER = process.env.COLLECTION_ISSUER!; // issuer NFT Anda
+
+// Extend the User type to include 'address'
+declare module "next-auth" {
+  interface User {
+    address?: string;
+  }
+  interface Session {
+    user: {
+      address?: string;
+      name?: string;
+      id?: string;
+    };
+  }
+}
 
 const handler = NextAuth({
   providers: [
@@ -18,25 +32,35 @@ const handler = NextAuth({
         const validHolder = await isHolderOfIssuer(signedBy, COLLECTION_ISSUER);
         if (!validHolder) {
           console.log("❌ Bukan holder, akses ditolak");
-          // lempar error agar diarahkan ke /auth/error?error=NOT_HOLDER
-          throw new Error("NOT_HOLDER");
+          throw new Error("NOT_HOLDER"); // lempar error spesifik
         }
 
         console.log("✅ Holder valid, login diizinkan");
-        return { id: signedBy, name: signedBy };
+        // kirim address sebagai user.id
+        return { id: signedBy, name: signedBy, address: signedBy };
       },
     }),
   ],
   session: { strategy: "jwt" },
-  pages: { 
-    signIn: "/", 
-    error: "/auth/error", 
-  },
+  pages: { signIn: "/", error: "/auth/error" },
+
   callbacks: {
-    async signIn({ }) {
-      return true;
+    // inject address ke token JWT
+    async jwt({ token, user }) {
+      if (user) {
+        token.address = user.address; // tambahkan address
+      }
+      return token;
+    },
+    // inject address ke session (client-side)
+    async session({ session, token }) {
+      if (token?.address) {
+        session.user.address = token.address as string;
+      }
+      return session;
     },
   },
 });
 
+// WAJIB: export GET & POST agar NextAuth jalan
 export { handler as GET, handler as POST };
