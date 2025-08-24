@@ -4,20 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 const COLLECTION_ISSUER = process.env.COLLECTION_ISSUER!; // issuer NFT Anda
 
-// Extend the User type to include 'address'
-declare module "next-auth" {
-  interface User {
-    address?: string;
-  }
-  interface Session {
-    user: {
-      address?: string;
-      name?: string;
-      id?: string;
-    };
-  }
-}
-
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -26,18 +12,23 @@ const handler = NextAuth({
         signedBy: { label: "SignedBy", type: "text" },
       },
       async authorize(credentials) {
-        const signedBy = credentials?.signedBy;
-        if (!signedBy) return null;
+        try {
+          const signedBy = credentials?.signedBy;
+          if (!signedBy) return null;
 
-        const validHolder = await isHolderOfIssuer(signedBy, COLLECTION_ISSUER);
-        if (!validHolder) {
-          console.log("❌ Bukan holder, akses ditolak");
-          throw new Error("NOT_HOLDER"); // lempar error spesifik
+          const validHolder = await isHolderOfIssuer(
+            signedBy,
+            COLLECTION_ISSUER
+          );
+          if (!validHolder) {
+            throw new Error("NOT_HOLDER");
+          }
+
+          return { id: signedBy, name: signedBy, address: signedBy };
+        } catch (err) {
+          console.error("Authorize error:", err);
+          throw new Error("CREDENTIALS_ERROR");
         }
-
-        console.log("✅ Holder valid, login diizinkan");
-        // kirim address sebagai user.id
-        return { id: signedBy, name: signedBy, address: signedBy };
       },
     }),
   ],

@@ -1,16 +1,14 @@
 import Link from "next/link";
 
 // app/auth/error/page.tsx
-export default async function AuthErrorPage({
+export default function AuthErrorPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: { error?: string };
 }) {
-  const params = await searchParams;
-  const error = params?.error as string | undefined;
+  const error = searchParams?.error;
 
   let message = "Login gagal, silakan coba lagi.";
-
   if (error === "NOT_HOLDER") {
     message = "❌ Anda bukan holder koleksi NFT, akses ditolak.";
   } else if (error === "CredentialsSignin") {
@@ -21,12 +19,12 @@ export default async function AuthErrorPage({
     <div className="flex h-screen items-center justify-center">
       <div className="p-6 bg-white shadow rounded text-center">
         <h1 className="text-xl font-bold mb-2">Login Error</h1>
-        <p className="mb-4">{message}</p>
+        <p>{message}</p>
         <Link
-          href="/"
-          className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white"
+          href={"/"}
+          className="text-3xl text-white px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700"
         >
-          BACK HOME
+          BACK
         </Link>
       </div>
     </div>
