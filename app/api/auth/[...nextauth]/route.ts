@@ -27,7 +27,7 @@ const handler = NextAuth({
     }),
   ],
   session: { strategy: "jwt" },
-  pages: { signIn: "/" },
+  pages: { signIn: "/", error: "/api/auth/error" },
 });
 
 // ⬅️ WAJIB: export GET & POST agar NextAuth jalan

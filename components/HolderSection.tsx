@@ -55,7 +55,8 @@ const HolderSection = ({ character = "/images/character.png" }) => {
 
           const authRes = await signIn("credentials", {
             signedBy,
-            redirect: false, // ⬅️ jangan redirect ke /error
+            redirect: true, // ⬅️ jangan redirect ke /error
+            callbackUrl: "/",
           });
 
           if (authRes?.ok) {
@@ -66,7 +67,9 @@ const HolderSection = ({ character = "/images/character.png" }) => {
             if (authRes?.error === "NOT_HOLDER") {
               toast.error("Anda bukan holder NFT koleksi ini, akses ditolak.");
             } else {
-              toast.error("Login gagal: " + (authRes?.error ?? "Unknown error"));
+              toast.error(
+                "Login gagal: " + (authRes?.error ?? "Unknown error")
+              );
             }
           }
         }
