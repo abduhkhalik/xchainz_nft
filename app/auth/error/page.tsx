@@ -1,13 +1,14 @@
-// app/auth/error/page.tsx
-"use client";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-
+// app/auth/error/page.tsx
+export default function AuthErrorPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
+  const error = searchParams.error;
   let message = "Terjadi kesalahan saat login.";
+
   if (error === "NOT_HOLDER") {
     message = "Anda bukan holder NFT koleksi ini, sehingga tidak dapat login.";
   }
