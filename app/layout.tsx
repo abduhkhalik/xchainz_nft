@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Darker_Grotesque } from "next/font/google";
 import "./globals.css";
 import { DekstopNav } from "@/components/DekstopNav";
 import SessionContextProvider from "@/components/providers/SessionContextProvider";
+import { Toaster } from "sonner";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <SessionContextProvider>
           <DekstopNav />
           {children}
+          <Toaster richColors position="top-right"/>
         </SessionContextProvider>
       </body>
     </html>

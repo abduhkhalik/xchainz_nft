@@ -1,5 +1,8 @@
+import { isHolderOfIssuer } from "@/lib/xprlUtils";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+const COLLECTION_ISSUER = "rXXXXXXXXXXXXXXXXXXXXXXXXXXX"; // ganti dengan issuer NFT Anda
 
 const handler = NextAuth({
   providers: [
@@ -8,40 +11,25 @@ const handler = NextAuth({
       credentials: {
         signedBy: { label: "SignedBy", type: "text" },
       },
-
-      authorize(credentials) {
+      async authorize(credentials) {
         const signedBy = credentials?.signedBy;
         if (!signedBy) return null;
 
-        return {
-          id: signedBy,
-          name: "XRP User",
-          image: `https://xumm.app/avatar/${signedBy}`,
-        };
+        // ✅ cek holder NFT
+        const validHolder = await isHolderOfIssuer(signedBy, COLLECTION_ISSUER);
+        if (!validHolder) {
+          console.log("❌ Bukan holder, akses ditolak");
+          return null;
+        }
+
+        console.log("✅ Holder valid, login diizinkan");
+        return { id: signedBy, name: signedBy };
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) token.sub = user.id;
-      return token;
-    },
-    async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.sub as string,
-        },
-      };
-    },
-  },
-  pages: {
-    signIn: "/", // optional
-  },
+  session: { strategy: "jwt" },
+  pages: { signIn: "/" }, // optional redirect
 });
 
+// ⬅️ WAJIB: export GET & POST agar NextAuth jalan
 export { handler as GET, handler as POST };

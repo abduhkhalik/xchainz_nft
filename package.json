@@ -25,10 +25,12 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-intersection-observer": "^9.16.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0",
     "verify-xrpl-signature": "^9.0.0",
+    "xrpl": "^4.4.0",
     "xumm": "^1.8.0",
     "xumm-sdk": "^1.11.2"
   },

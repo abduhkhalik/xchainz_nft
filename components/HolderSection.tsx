@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const HolderSection = ({ character = "/images/character.png" }) => {
   const [qrUrl, setQrUrl] = useState<string | null>(null);
@@ -58,8 +59,10 @@ const HolderSection = ({ character = "/images/character.png" }) => {
 
           if (authRes?.ok) {
             router.refresh();
+            toast.success("Welcome My Holder")
           } else {
             console.error("❌ Gagal login ke NextAuth:", authRes?.error);
+            toast.error("Anda bukan holder NFT koleksi ini, sehingga tidak dapat login.")
           }
         }
 
@@ -134,8 +137,16 @@ const HolderSection = ({ character = "/images/character.png" }) => {
               className="uppercase text-3xl bg-transparent mt-26 p-6 font-jakarta font-medium h-[80px]"
               onClick={handleLogin}
             >
-              account
+               {isLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Loading...
+                  </div>
+                ) : (
+                  "account"
+                )}
             </Button>
+            
           )}
         </div>
       </div>
